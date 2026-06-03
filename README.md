@@ -177,23 +177,23 @@ li { margin-bottom: 6px; }
 <script>
 // ═══════ GRAMMAR CONTENT POOLS ═══════
 const correctSentences = [
-    "Does your father usually go to work by elephant?",
+    "Does your dad usually go to work by ass?",
     "No, he seldom does.",
     "Does your mom sometimes go to work by pig?",
     "Yes, she sometimes does.",
     "Does your brother always go to Mars by car?",
     "No, he never does.",
-    "Does the Principal often go to a post office by garbage truck?",
+    "Does Mr.Wang often go to a park by garbage truck?",
     "Yes, he often does.",
     "Does your friend usually go to school by monkey?",
     "No, he never does."
 ];
 
 const incorrectSentences = [
-    "Do your father usually goes to work by elephant?",
+    "Do your father usually goes to work by ass?",
     "No, he usually goes does.",
     "Yes, he do sometimes.",
-    "No, she doesn't rarely does.",
+    "No, she doesn't never does.",
     "Yes, he does often goes.",
     "Does your usually go to school by elephant?",
     "No, it never do."
@@ -310,7 +310,7 @@ function spawnItemForPlayer(playerNum){
     ? correctSentences[Math.floor(Math.random()*correctSentences.length)]
     : incorrectSentences[Math.floor(Math.random()*incorrectSentences.length)];
     
-  const baseSpeed = 1.0 + (level * 0.12) + Math.random() * 0.3;
+  const baseSpeed = 2.0 + (level * 0.12) + Math.random() * 0.3;
   const boxWidth = 360; 
   const boxHeight = 68;
   
