@@ -1,336 +1,470 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en-US">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIoT智慧家庭：數據保衛戰</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --dark: #1e293b;
-            --light: #f8fafc;
-        }
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The True or False Grammar Clash!</title>
+<style>
+:root {
+--primary: #2563eb;
+--p1-color: #38bdf8;
+--p2-color: #ec4899;
+--success: #16a34a;
+--danger: #dc2626;
+--dark: #1e293b;
+--light: #f8fafc;
+}
 
-        body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, "Microsoft JhengHei";
-            background-color: var(--dark);
-            color: var(--light);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
+body {
+font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, "Microsoft JhengHei";
+background-color: var(--dark);
+color: var(--light);
+margin: 0;
+padding: 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+min-height: 100vh;
+}
 
-        #game-container {
-            width: 100%;
-            max-width: 800px;
-            background: #0f172a;
-            border: 3px solid var(--primary);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-        }
+#game-container {
+width: 100%;
+max-width: 850px;
+background: #0f172a;
+border: 3px solid var(--primary);
+border-radius: 12px;
+padding: 20px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+box-sizing: border-box;
+}
 
-        h1 {
-            text-align: center;
-            color: #38bdf8;
-            margin-top: 0;
-            font-size: 24px;
-        }
+h1 {
+text-align: center;
+color: #38bdf8;
+margin-top: 0;
+font-size: 26px;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
 
-        #dashboard {
-            display: flex;
-            justify-content: space-between;
-            background: #1e293b;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+#turn-indicator {
+text-align: center;
+font-size: 20px;
+font-weight: bold;
+padding: 10px;
+margin-bottom: 15px;
+background: #2563eb;
+border-radius: 6px;
+color: white;
+transition: background 0.3s;
+}
 
-        .stat-box {
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
+.p1-turn { background-color: var(--p1-color) !important; color: #000 !important; }
+.p2-turn { background-color: var(--p2-color) !important; color: #fff !important; }
 
-        #score-box { color: #4ade80; }
-        #hp-box { color: #f87171; }
-        #timer-box { color: #fbbf24; }
+#dashboard {
+display: flex;
+justify-content: space-between;
+background: #1e293b;
+padding: 15px;
+border-radius: 8px;
+margin-bottom: 20px;
+font-size: 18px;
+font-weight: bold;
+}
 
-        #game-canvas {
-            width: 100%;
-            height: 400px;
-            background: #020617;
-            border: 2px dashed #334155;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            cursor: crosshair;
-        }
+.stat-box {
+padding: 5px 10px;
+border-radius: 4px;
+}
 
-        .data-node {
-            position: absolute;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            user-select: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
-            animation: floatDown 4s linear forwards;
-        }
+#p1-box { color: var(--p1-color); }
+#p2-box { color: var(--p2-color); }
+#timer-box { color: #fbbf24; }
 
-        .data-node:hover {
-            transform: scale(1.1);
-        }
+#game-canvas {
+width: 100%;
+height: 440px;
+background: #020617;
+border: 2px dashed #334155;
+border-radius: 8px;
+position: relative;
+overflow: hidden;
+}
 
-        /* 正常數據樣式 */
-        .node-normal {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border: 2px solid #34d399;
-        }
+.data-node {
+position: absolute;
+padding: 14px 20px;
+border-radius: 20px;
+font-weight: bold;
+font-size: 15px;
+cursor: pointer;
+user-select: none;
+box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+transition: transform 0.1s;
+/* Slower Speed: Animation adjusted from 5s to 10s to make it double slower */
+animation: floatDown 10s linear forwards; 
+max-width: 320px;
+text-align: center;
+color: white;
+}
 
-        /* 異常數據樣式 */
-        .node-dirty {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border: 2px solid #f87171;
-        }
+/* Custom Player Styles for the falling text boxes */
+.node-p1 {
+background: linear-gradient(135deg, #0284c7, #0369a1);
+border: 2px solid var(--p1-color);
+}
 
-        #intro-screen, #end-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-        }
+.node-p2 {
+background: linear-gradient(135deg, #db2777, #9d174d);
+border: 2px solid var(--p2-color);
+}
 
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.2s;
-        }
+.data-node:hover {
+transform: scale(1.05);
+}
 
-        .btn:hover {
-            background-color: #1d4ed8;
-        }
+#intro-screen, #end-screen {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 30px 20px;
+height: 90%;
+box-sizing: border-box;
+}
 
-        .hidden {
-            display: none !important;
-        }
+.btn {
+background-color: var(--primary);
+color: white;
+border: none;
+padding: 12px 30px;
+font-size: 18px;
+font-weight: bold;
+border-radius: 6px;
+cursor: pointer;
+margin-top: 20px;
+transition: background 0.2s;
+}
 
-        ol {
-            text-align: left;
-            max-width: 500px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
+.btn:hover {
+background-color: #1d4ed8;
+}
 
-        @keyframes floatDown {
-            0% { top: -60px; }
-            100% { top: 410px; }
-        }
+.hidden {
+display: none !important;
+}
 
-        #knowledge-tip {
-            margin-top: 15px;
-            background: #1e293b;
-            padding: 12px;
-            border-left: 4px solid var(--primary);
-            border-radius: 4px;
-            font-size: 14px;
-        }
-    </style>
+ul {
+text-align: left;
+max-width: 585px;
+line-height: 1.6;
+margin-bottom: 20px;
+}
+
+@keyframes floatDown {
+0% { top: -60px; }
+100% { top: 450px; }
+}
+
+#knowledge-tip {
+margin-top: 15px;
+background: #1e293b;
+padding: 12px;
+border-left: 4px solid var(--primary);
+border-radius: 4px;
+font-size: 14px;
+}
+</style>
 </head>
 <body>
 
 <div id="game-container">
-    <h1>智能家庭 AIoT 數據防衛戰</h1>
+<h1>The Crazy Commute Grammar Battle! 🛸</h1>
 
-    <div id="dashboard" class="hidden">
-        <div class="stat-box" id="score-box">得分: <span id="score">0</span></div>
-        <div class="stat-box" id="timer-box">倒數: <span id="timer">30</span>s</div>
-        <div class="stat-box" id="hp-box">主機防禦力: <span id="hp">100</span>%</div>
-    </div>
+<div id="turn-indicator" class="hidden">Player 1's Turn!</div>
 
-    <div id="game-canvas">
-        <div id="intro-screen">
-            <h3>【教學情境】</h3>
-            <p>智慧家庭的 IoT 感測器正在回傳環境數據到 Scratch 主機。但是，網路中夾雜了許多<b>「髒數據（Dirty Data，如異常值、空白、文字錯誤）」</b>！</p>
-            <h3>【核心任務】</h3>
-            <ol>
-                <li>當看到<b>【綠色正常數據】</b>（例如：25°C、濕度60%）：讓它順利通過，主機將成功儲存資料並得分！</li>
-                <li>當看到<b>【紅色異常數據】</b>（例如：-999°C、室溫9999度、空白或文字錯誤）：<b>請立刻點擊它進行「資料清理」將其消滅！</b>如果讓異常數據混入主機，防禦力就會下降！</li>
-            </ol>
-            <button class="btn" onclick="startGame()">開始執行程式</button>
-        </div>
+<div id="dashboard" class="hidden">
+<div class="stat-box" id="p1-box">Player 1 (Blue): <span id="p1-score">0</span></div>
+<div class="stat-box" id="timer-box">Time Left: <span id="timer">45</span>s</div>
+<div class="stat-box" id="p2-box">Player 2 (Pink): <span id="p2-score">0</span></div>
+</div>
 
-        <div id="end-screen" class="hidden">
-            <h2 id="end-title">遊戲結束</h2>
-            <p id="end-desc"></p>
-            <button class="btn" onclick="restartGame()">重新偵錯與分析</button>
-        </div>
-    </div>
+<div id="game-canvas">
+<div id="intro-screen">
+<h3>【How to Play】</h3>
+<p>Funny sentences are falling down the screen! Player 1 and Player 2 take turns protecting their scores.</p>
+<ul>
+<li>The falling boxes will change color to match the active player's turn! 🔵/💗</li>
+<li>If a sentence has <b>CORRECT GRAMMAR</b> (e.g., <i>"Does he go...?"</i>) 👉 <b>CLICK IT!</b> (+10 points)</li>
+<li>If a sentence has <b>BAD GRAMMAR</b> (e.g., <i>"Does he goes...?"</i>) 👉 <b>DO NOT CLICK IT!</b> Let it fall.</li>
+<li>Clicking a bad sentence or letting a good sentence slip away will lose you points!</li>
+</ul>
+<button class="btn" onclick="startGame()">Start Battle!</button>
+</div>
 
-    <div id="knowledge-tip">
-        <b>💡 資訊科技小知識：</b>資料分析前必須進行「資料清理（Data Cleaning）」，清除極端值與格式錯誤。在 Scratch 中，我們常使用「如果 則」積木進行資料驗證（Data Validation），確保 AIoT 系統不會因為髒數據而誤開冷氣或引發警報！
-    </div>
+<div id="end-screen" class="hidden">
+<h2 id="end-title">Battle Over!</h2>
+<p id="end-desc"></p>
+<button class="btn" onclick="restartGame()">Play Again</button>
+</div>
+</div>
+
+<div id="knowledge-tip">
+<b>💡 Quick Grammar Reminders:</b><br>
+1. After <b>Does</b>, always use the base action verb: <i>"Does your father <b>go</b>..."</i> (NOT <i>goes</i>).<br>
+2. Short answers keep it simple: <i>"Yes, he <b>usually does</b>."</i> or <i>"No, he <b>never does</b>."</i>
+</div>
 </div>
 
 <script>
-    const canvas = document.getElementById('game-canvas');
-    const introScreen = document.getElementById('intro-screen');
-    const endScreen = document.getElementById('end-screen');
-    const dashboard = document.getElementById('dashboard');
+const canvas = document.getElementById('game-canvas');
+const introScreen = document.getElementById('intro-screen');
+const endScreen = document.getElementById('end-screen');
+const dashboard = document.getElementById('dashboard');
+const turnIndicator = document.getElementById('turn-indicator');
+
+const p1ScoreEl = document.getElementById('p1-score');
+const p2ScoreEl = document.getElementById('p2-score');
+const timerEl = document.getElementById('timer');
+const endTitle = document.getElementById('end-title');
+const endDesc = document.getElementById('end-desc');
+
+let p1Score = 0;
+let p2Score = 0;
+let timeLeft = 45;
+let currentPlayer = 1; 
+let gameInterval;
+let spawnInterval;
+let turnSwitchInterval;
+let isGameRunning = false;
+
+// Audio Context initialization for built-in Web Sound Effects
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playSound(type) {
+    if (!audioCtx) return;
     
-    const scoreEl = document.getElementById('score');
-    const timerEl = document.getElementById('timer');
-    const hpEl = document.getElementById('hp');
-    const endTitle = document.getElementById('end-title');
-    const endDesc = document.getElementById('end-desc');
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    
+    if (type === 'correct') {
+        // High pitch ding sound for correct hits
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        osc.frequency.setValueAtTime(880, now + 0.1); // A5
+        gainNode.gain.setValueAtTime(0.1, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+    } else if (type === 'incorrect') {
+        // Harsh buzzer sound for incorrect penalties
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+    } else if (type === 'miss') {
+        // Soft drop tone when letting a correct sentence fall past
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(200, now + 0.2);
+        gainNode.gain.setValueAtTime(0.1, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+    } else if (type === 'victory') {
+        // Upbeat victory tune
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.setValueAtTime(659.25, now + 0.15); // E5
+        osc.frequency.setValueAtTime(783.99, now + 0.3); // G5
+        osc.frequency.setValueAtTime(1046.50, now + 0.45); // C6
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.8);
+    }
+}
 
-    let score = 0;
-    let hp = 100;
-    let timeLeft = 30;
-    let gameInterval;
-    let spawnInterval;
-    let isGameRunning = false;
+// Simplified Sentences Pool (Mix of Questions and Answers)[cite: 2]
+const correctSentences = [
+    "Does your father usually go to work by elephant?",[cite: 2]
+    "No, he seldom does.",[cite: 2]
+    "Does your mom sometimes go to work by pig?",[cite: 2]
+    "Yes, she sometimes does.",[cite: 2]
+    "Does your brother always go to Mars by car?",[cite: 2]
+    "No, he never does.",[cite: 2]
+    "Does the Principal often go to a post office by garbage truck?",[cite: 2]
+    "Yes, he often does.",[cite: 2]
+    "Does your friend usually go to school by monkey?",[cite: 2]
+    "No, he never does."[cite: 2]
+];
 
-    // 數據庫池：模擬 AIoT 回傳的原始資料
-    const normalData = ["溫度: 26°C", "濕度: 55%", "光線: 350lm", "溫度: 22°C", "濕度: 62%", "冷氣: ON", "除濕機: OFF"];
-    const dirtyData = ["溫度: -999°C", "溫度: 9999°C", "濕度: 空白", "光線: ERROR", "濕度: --%", "冷氣: 壞掉了", "溫度: NaN"];
+const incorrectSentences = [
+    "Do your father usually goes to work by elephant?",[cite: 2]
+    "No, he usually goes does.",[cite: 2]
+    "No, he usually goes does.",[cite: 2]
+    "Yes, he do sometimes.",[cite: 2]
+    "No, he usually goes does.",[cite: 2]
+    "No, she doesn't rarely does.",[cite: 2]
+    "Yes, he do sometimes.",[cite: 2]
+    "Yes, he does often goes.",[cite: 2]
+    "Does your  usually go to school by elephant?",[cite: 2]
+    "No, it never do."[cite: 2]
+];
 
-    function startGame() {
-        introScreen.classList.add('hidden');
-        endScreen.classList.add('hidden');
-        dashboard.classList.remove('hidden');
-        
-        score = 0;
-        hp = 100;
-        timeLeft = 30;
-        isGameRunning = true;
-        
-        scoreEl.innerText = score;
-        hpEl.innerText = hp;
-        timerEl.innerText = timeLeft;
+function switchPlayerTurn() {
+    currentPlayer = currentPlayer === 1 ? 2 : 1;[cite: 2]
+    if(currentPlayer === 1) {
+        turnIndicator.innerText = "🎮 PLAYER 1's TURN (Click Good Sentences!)";[cite: 2]
+        turnIndicator.className = "p1-turn";[cite: 2]
+    } else {
+        turnIndicator.innerText = "🎮 PLAYER 2's TURN (Click Good Sentences!)";[cite: 2]
+        turnIndicator.className = "p2-turn";[cite: 2]
+    }
+}
 
-        // 清除舞台上舊有的節點
-        document.querySelectorAll('.data-node').forEach(node => node.remove());
+function startGame() {
+    initAudio();
+    introScreen.classList.add('hidden');[cite: 2]
+    endScreen.classList.add('hidden');[cite: 2]
+    dashboard.classList.remove('hidden');[cite: 2]
+    turnIndicator.classList.remove('hidden');[cite: 2]
 
-        // 啟動計時器
-        gameInterval = setInterval(() => {
-            timeLeft--;
-            timerEl.innerText = timeLeft;
-            if (timeLeft <= 0) {
-                endGame(true);
-            }
-        }, 1000);
+    p1Score = 0;[cite: 2]
+    p2Score = 0;[cite: 2]
+    timeLeft = 45;[cite: 2]
+    currentPlayer = 1;[cite: 2]
 
-        // 隨機生成數據節點
-        spawnInterval = setInterval(spawnDataNode, 800);
+    p1ScoreEl.innerText = p1Score;[cite: 2]
+    p2ScoreEl.innerText = p2Score;[cite: 2]
+    timerEl.innerText = timeLeft;[cite: 2]
+
+    turnIndicator.innerText = "🎮 PLAYER 1's TURN (Click Good Sentences!)";[cite: 2]
+    turnIndicator.className = "p1-turn";[cite: 2]
+
+    isGameRunning = true;[cite: 2]
+
+    document.querySelectorAll('.data-node').forEach(node => node.remove());[cite: 2]
+
+    // Game timer countdown[cite: 2]
+    gameInterval = setInterval(() => {
+        timeLeft--;[cite: 2]
+        timerEl.innerText = timeLeft;[cite: 2]
+        if (timeLeft <= 0) {
+            endGame();[cite: 2]
+        }
+    }, 1000);[cite: 2]
+
+    // Spawn falling sentences slightly slower to match block pace
+    spawnInterval = setInterval(spawnSentenceNode, 2800);
+
+    // Swap turns automatically every 9 seconds[cite: 2]
+    turnSwitchInterval = setInterval(switchPlayerTurn, 9000);[cite: 2]
+}
+
+function spawnSentenceNode() {
+    if (!isGameRunning) return;[cite: 2]
+
+    const node = document.createElement('div');[cite: 2]
+    node.classList.add('data-node');[cite: 2]
+
+    // Add specific box colors based on whose turn it currently is
+    if (currentPlayer === 1) {
+        node.classList.add('node-p1');
+    } else {
+        node.classList.add('node-p2');
     }
 
-    function spawnDataNode() {
-        if (!isGameRunning) return;
+    const isGoodGrammar = Math.random() < 0.5;[cite: 2]
 
-        const node = document.createElement('div');
-        node.classList.add('data-node');
+    if (isGoodGrammar) {
+        node.innerText = correctSentences[Math.floor(Math.random() * correctSentences.length)];[cite: 2]
+        node.dataset.type = 'correct';[cite: 2]
+    } else {
+        node.innerText = incorrectSentences[Math.floor(Math.random() * incorrectSentences.length)];[cite: 2]
+        node.dataset.type = 'incorrect';[cite: 2]
+    }
 
-        // 隨機決定是正常數據(60%)還是異常髒數據(40%)
-        const isDirty = Math.random() < 0.4;
-        
-        if (isDirty) {
-            node.classList.add('node-dirty');
-            node.innerText = dirtyData[Math.floor(Math.random() * dirtyData.length)];
-            node.dataset.type = 'dirty';
+    // Random X Position[cite: 2]
+    const randomX = Math.random() * (canvas.clientWidth - 260);[cite: 2]
+    node.style.left = `${randomX}px`;[cite: 2]
+    node.style.top = `-60px`;[cite: 2]
+
+    // Click logic[cite: 2]
+    node.addEventListener('mousedown', (e) => {
+        e.stopPropagation();[cite: 2]
+        if (!isGameRunning) return;[cite: 2]
+
+        if (node.dataset.type === 'correct') {[cite: 2]
+            // Good catch!
+            playSound('correct');
+            if (currentPlayer === 1) { p1Score += 10; p1ScoreEl.innerText = p1Score; } [cite: 2]
+            else { p2Score += 10; p2ScoreEl.innerText = p2Score; }[cite: 2]
+            node.remove();[cite: 2]
         } else {
-            node.classList.add('node-normal');
-            node.innerText = normalData[Math.floor(Math.random() * normalData.length)];
-            node.dataset.type = 'normal';
+            // Mistake! Clicked bad grammar[cite: 2]
+            playSound('incorrect');
+            if (currentPlayer === 1) { p1Score = Math.max(0, p1Score - 5); p1ScoreEl.innerText = p1Score; } [cite: 2]
+            else { p2Score = Math.max(0, p2Score - 5); p2ScoreEl.innerText = p2Score; }[cite: 2]
+            node.remove();[cite: 2]
         }
+    });
 
-        // 隨機X軸位置
-        const randomX = Math.random() * (canvas.clientWidth - 120);
-        node.style.left = `${randomX}px`;
-        node.style.top = `-50px`;
-
-        // 點擊事件處理
-        node.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            if (node.dataset.type === 'dirty') {
-                score += 10;
-                scoreEl.innerText = score;
-                node.remove(); // 成功清理
-            } else {
-                // 誤殺正常數據，扣分並扣主機防禦力
-                score = Math.max(0, score - 5);
-                hp = Math.max(0, hp - 10);
-                scoreEl.innerText = score;
-                hpEl.innerText = hp;
-                node.remove();
-                checkHp();
-            }
-        });
-
-        // 動態監聽動畫結束（當資料掉落到最底部，未被點擊時）
-        node.addEventListener('animationend', () => {
-            if (node.dataset.type === 'dirty') {
-                // 髒數據漏過去了，危害到主機，扣防禦力
-                hp = Math.max(0, hp - 20);
-                hpEl.innerText = hp;
-                checkHp();
-            } else {
-                // 正常數據順利通過，代表系統成功收集
-                score += 5;
-                scoreEl.innerText = score;
-            }
-            node.remove();
-        });
-
-        canvas.appendChild(node);
-    }
-
-    function checkHp() {
-        if (hp <= 0) {
-            endGame(false);
+    // Handle when sentences hit the bottom floor[cite: 2]
+    node.addEventListener('animationend', () => {
+        if (node.dataset.type === 'correct' && isGameRunning) {[cite: 2]
+            // Missed a good sentence! Minor penalty[cite: 2]
+            playSound('miss');
+            if (currentPlayer === 1) { p1Score = Math.max(0, p1Score - 3); p1ScoreEl.innerText = p1Score; } [cite: 2]
+            else { p2Score = Math.max(0, p2Score - 3); p2ScoreEl.innerText = p2Score; }[cite: 2]
         }
-    }
+        node.remove();[cite: 2]
+    });
 
-    function endGame(isWin) {
-        isGameRunning = false;
-        clearInterval(gameInterval);
-        clearInterval(spawnInterval);
-        
-        document.querySelectorAll('.data-node').forEach(node => node.remove());
-        endScreen.classList.remove('hidden');
+    canvas.appendChild(node);[cite: 2]
+}
 
-        if (isWin) {
-            endTitle.innerText = "🎉 數據防衛成功！";
-            endTitle.style.color = "#4ade80";
-            endDesc.innerHTML = `太棒了！你的 Scratch 資料驗證程式發揮了作用。<br>最終得分：<b>${score}</b> 分<br>主機防禦狀態：良好 (${hp}%)`;
-        } else {
-            endTitle.innerText = "❌ 系統當機崩潰！";
-            endTitle.style.color = "#f87171";
-            endDesc.innerHTML = `太多「髒數據」流入智慧家庭伺服器，導致冷氣與門鎖系統產生邏輯混亂！<br>請重新檢查並進行資料前處理。`;
-        }
-    }
+function endGame() {
+    isGameRunning = false;[cite: 2]
+    clearInterval(gameInterval);[cite: 2]
+    clearInterval(spawnInterval);[cite: 2]
+    clearInterval(turnSwitchInterval);[cite: 2]
 
-    function restartGame() {
-        startGame();
+    document.querySelectorAll('.data-node').forEach(node => node.remove());[cite: 2]
+    endScreen.classList.remove('hidden');[cite: 2]
+    turnIndicator.classList.add('hidden');[cite: 2]
+
+    playSound('victory');
+
+    endTitle.innerText = "🏁 Battle Over!";[cite: 2]
+    if (p1Score > p2Score) {[cite: 2]
+        endDesc.innerHTML = `🏆 <b>Player 1 Wins!</b><br><br>Player 1: <span style="color:var(--p1-color)">${p1Score}</span> points<br>Player 2: <span style="color:var(--p2-color)">${p2Score}</span> points`;[cite: 2]
+    } else if (p2Score > p1Score) {[cite: 2]
+        endDesc.innerHTML = `🏆 <b>Player 2 Wins!</b><br><br>Player 1: <span style="color:var(--p1-color)">${p1Score}</span> points<br>Player 2: <span style="color:var(--p2-color)">${p2Score}</span> points`;[cite: 2]
+    } else {[cite: 2]
+        endDesc.innerHTML = `🤝 <b>It's a Tie!</b><br><br>Both players scored <b>${p1Score}</b> points!`;[cite: 2]
     }
+}
+
+function restartGame() {
+    startGame();[cite: 2]
+}
 </script>
 
 </body>
