@@ -310,7 +310,7 @@ function spawnItemForPlayer(playerNum){
     ? correctSentences[Math.floor(Math.random()*correctSentences.length)]
     : incorrectSentences[Math.floor(Math.random()*incorrectSentences.length)];
     
-  const baseSpeed = 0.5 + (level * 0.12) + Math.random() * 0.3;
+  const baseSpeed = 2.5 + (level * 0.12) + Math.random() * 0.3;
   const boxWidth = 360; 
   const boxHeight = 68;
   
