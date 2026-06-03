@@ -434,11 +434,11 @@ function loop(){
   cx.setLineDash([]); // Reset line formatting
   
   // Balanced Spawn Loops
-  const rate = Math.max(40, 100 - level * 7);
-  if(frame % rate === 0){
-    spawnItemForPlayer(1);
-    spawnItemForPlayer(2);
-  }
+  const rate = Math.max(90, 240 - level * 15); // <-- CHANGE THIS LINE
+if(frame % rate === 0){
+  spawnItemForPlayer(1);
+  spawnItemForPlayer(2);
+}
   
   // Track falling elements
   for(let it of items){
